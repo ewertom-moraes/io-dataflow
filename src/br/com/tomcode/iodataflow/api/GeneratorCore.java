@@ -37,6 +37,9 @@ public class GeneratorCore implements Generator{
 				for(Object subObject : list){ // loop de objetos no atributo (se for um list, senao é o proprio objeto)
 					StringBuilder stringObj = new StringBuilder("");
 
+					if(subObject == null)
+						continue;
+					
 					for (Field field : subObject.getClass().getFields()) { // loop de fields do registro
 
 						br.com.tomcode.iodataflow.DataFlowRecord dataFlowRecord = field.getAnnotation(br.com.tomcode.iodataflow.DataFlowRecord.class);
@@ -46,13 +49,23 @@ public class GeneratorCore implements Generator{
 								Object subSubObject = field.get(subObject);
 								if(field.get(subObject) == null)
 									continue;
-								stringObj.append(System.lineSeparator());
-								stringObj.append(writeToStringBuilder(Arrays.asList(new DataFlowRecord(subSubObject,  record.getLayout() ))));
+								if(stringObj.length() > 0)
+									stringObj.append(System.lineSeparator());
+								StringBuilder recurse = writeToStringBuilder(Arrays.asList(new DataFlowRecord(subSubObject,  record.getLayout() )));
+								
+								boolean endsWithLineSeparator = recurse.toString().endsWith(System.lineSeparator());
+								if(endsWithLineSeparator)
+									recurse = recurse.delete(recurse.lastIndexOf(System.lineSeparator()), recurse.length());
+								stringObj.append(recurse);
+								
 							} catch (IllegalArgumentException | IllegalAccessException e) {
 								e.printStackTrace();
 							}
+							// se o campo for dataflow, recursivamente será gerado os valores dos atributos deste
+							// logo, nao deve continuar para gerar o valor dele proprio com format.
+							// format é apenas para campos que possuem valor proprio como string, int, etc...
+							continue; 
 						}
-						
 						stringObj.append(dataFlowStrategy.format(field, subObject));
 					}
 					file.append(stringObj);
@@ -60,9 +73,6 @@ public class GeneratorCore implements Generator{
 				}
 			}
 		}
-		int lastLineSeparator = file.lastIndexOf(System.lineSeparator());
-		if(lastLineSeparator > -1)
-			file = file.delete(lastLineSeparator, file.length());
 		return file;
 	}
 }

@@ -24,7 +24,10 @@ public class DelimitedFieldStrategy implements DataFlowStrategy {
 		DecimalSeparator decimalSeparator = layoutConfigAnnotation.defaultDecimalSeparator();
 		DateFormat dateFormat = layoutConfigAnnotation.defaultDateFormat();
 		
-		return Util.formatByType(field, instance, dateFormat, decimalSeparator).append(delimiter);
+		StringBuilder formatByType = Util.formatByType(field, instance, dateFormat, decimalSeparator);
+		formatByType.append(delimiter);
+		
+		return formatByType;
 	}
 
 	@Override

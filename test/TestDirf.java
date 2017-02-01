@@ -1,10 +1,11 @@
-import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import br.com.tomcode.iodataflow.api.DataFlow;
@@ -23,10 +24,12 @@ import layouts.dirf.ValoresMensais;
 public class TestDirf {
 
 
-	@Test
-	public void testOneLine() {
+	LayoutDIRF layout;
+	
+	@Before
+	public void init(){
 		
-		LayoutDIRF layout = new LayoutDIRF();
+		this.layout = new LayoutDIRF();
 		
 		Dirf dirf = new Dirf();
 		dirf.anoCalendario = "2017";
@@ -56,38 +59,35 @@ public class TestDirf {
 		
 		List<InformacoesBPFDEC> infos = new ArrayList<InformacoesBPFDEC>();
 		
-		infos.add(new ValoresMensais(RegistroDirf.RTRT));
+		ValoresMensais rtrt = new ValoresMensais(RegistroDirf.RTRT);
+		rtrt.valorM01 = "123";
+		rtrt.valorM02 = "123";
+		rtrt.valorM03 = "123";
+		rtrt.valorM04 = "123";
+		rtrt.valorM05 = "123";
+		rtrt.valorM06 = "123";
+		rtrt.valorM07 = "123";
+		rtrt.valorM08 = "123";
+		rtrt.valorM09 = "123";
+		rtrt.valorM10 = "123";
+		rtrt.valorM11 = "123";
+		rtrt.valorM12 = "123";
+		rtrt.valorM13 = "123";
+		
+		infos.add(rtrt);
 		infos.add(new ValoresMensais(RegistroDirf.RTPO));
 		infos.add(new INFPC());
 		infos.add(new INFPA());
-		bpfdec.informacoesBPFDEC = infos;
 		
 		layout.dirf = dirf;
 		layout.respo = respo;
 		layout.decpj = decpj;
 		layout.idrec = idrec;
+		
+		bpfdec.informacoesBPFDEC = infos;
 		layout.bpfdec = Arrays.asList(bpfdec);
 		
 		
-		
-		//bpfdec.informacoesBPFDEC = 
-		
-		DataFlow dataFlow = new DataFlow(layout);
-		
-		System.out.println(dataFlow.writeToStringBuilder().toString());
-		
-		assertTrue(true);
-		
-//		String[] linesProcessed = dataFlow.writeToStringBuilder().toString().split(System.lineSeparator());
-//		String[] linesExpected = {"1|Joao da Silva|171235"}; 
-//		
-//		
-//		for(int i=0; i < linesProcessed.length ; i++){
-//			assertEquals(linesExpected[i], linesProcessed[i]);
-//			//System.out.println(linesExpected[i]);
-//			System.out.println(linesProcessed[i]);
-//		}
-	
 	}
 	
 	
@@ -110,4 +110,35 @@ public class TestDirf {
 		
 	}
 	
+	
+	@Test
+	public void testaQueNaoDeveColocarDelimitadorAMais(){
+		
+		RIO rio = new RIO();
+		rio.valor = "1234512";
+		InformacoesBPFDEC rio2 = rio;
+		layout.bpfdec.get(0).informacoesBPFDEC.add(rio2);
+		
+		DataFlow dataFlow = new DataFlow(layout);
+		
+		String out = dataFlow.writeToStringBuilder().toString();
+		
+//		System.out.println(out);
+		
+		assertTrue(!out.contains("RIO|1234512|Outros||")); 
+		
+		
+	}
+
+
+	@Test
+	public void testaQueNaoDeveTerQuebraDeLinhaNoMeioDoArquivo(){
+		DataFlow dataFlow = new DataFlow(layout);
+		
+		String out = dataFlow.writeToStringBuilder().toString();
+		System.out.println(out);
+		boolean contains = out.contains(System.lineSeparator()+System.lineSeparator());
+		assertTrue(!contains);
+		
+	}
 }
