@@ -5,11 +5,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import br.com.tomcode.iodataflow.strategy.fixedfield.Align;
-import br.com.tomcode.iodataflow.strategy.fixedfield.FixedField;
-import br.com.tomcode.iodataflow.strategy.fixedfield.FixedFieldAlign;
-import br.com.tomcode.iodataflow.strategy.fixedfield.IODataFlowFixedLayoutConfig;
-
 public class Util {
 
 	public static String calendarToString(Calendar date, DateFormat dateFormat){
@@ -22,6 +17,10 @@ public class Util {
 	
 	public static String integerToString(Integer integer){
 		return integer+"";
+	}
+	
+	public static String longToString(Long lng){
+		return new Long(lng).toString();
 	}
 	
 	public static StringBuilder formatByType(Field field, Object instance, DateFormat dateFormat, DecimalSeparator decimalSeparator){
@@ -37,15 +36,18 @@ public class Util {
 				value =  (String) field.get(instance);
 			}
 			
-			if(type.isAssignableFrom(Integer.TYPE)){
+			if(type.isAssignableFrom(Integer.TYPE) || type.isAssignableFrom(Integer.class)){
 				value = integerToString((Integer) field.get(instance));
+			}
+			if(type.isAssignableFrom(Long.TYPE) || type.isAssignableFrom(Long.class)){
+				value = longToString((Long) field.get(instance));
 			}
 			
 			if(type.isAssignableFrom(BigDecimal.class)){
 				value = bigDecimalToString((BigDecimal) field.get(instance), decimalSeparator);
 			}
 			
-			if(type.isAssignableFrom(Double.TYPE)){
+			if(type.isAssignableFrom(Double.TYPE)|| type.isAssignableFrom(Double.class)){
 				value = "" +(BigDecimal) field.get(instance);
 			}
 			
