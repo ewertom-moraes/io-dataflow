@@ -10,15 +10,24 @@ import br.com.tomcode.iodataflow.api.DataFlowStrategy;
 public class FixedFieldsStrategy implements DataFlowStrategy{
 	
 	private Class<?> layoutConfig;
+	private String delimiter;
 	
 	public FixedFieldsStrategy(Class<?> layoutConfig) {
 		this.layoutConfig = layoutConfig;
+		this.delimiter =  ((IODataFlowFixedLayoutConfig) layoutConfig.getAnnotation(IODataFlowFixedLayoutConfig.class)).delimiter();
 	}
 
 	@Override
 	public String appendLineSeparator(StringBuilder str) {
 		if(str.toString().isEmpty())
 			return "";
+		
+		if(!this.delimiter.isEmpty()){
+			if(str.toString().endsWith(delimiter) && 
+				layoutConfig.getAnnotation(IODataFlowFixedLayoutConfig.class).lineEnd().isEmpty())
+			str.deleteCharAt(str.length()-1); //remove last delimiter
+		}
+		
 		if(!layoutConfig.getAnnotation(IODataFlowFixedLayoutConfig.class).lineEnd().isEmpty())
 			str.append(layoutConfig.getAnnotation(IODataFlowFixedLayoutConfig.class).lineEnd().isEmpty()); 
 		if(!str.toString().endsWith(System.lineSeparator()))
@@ -55,6 +64,8 @@ public class FixedFieldsStrategy implements DataFlowStrategy{
 		}else{
 			formatByType = setAlign(formatByType.toString(), length, alignNumber, fillerNumber);
 		}
+		
+		formatByType.append(delimiter);
 		
 		return formatByType;
 	}

@@ -22,4 +22,6 @@ public @interface IODataFlowFixedLayoutConfig {
 		char defaultNumberFiller() default '0';
 		
 		String lineEnd() default "";
+		
+		String delimiter() default "";
 }
