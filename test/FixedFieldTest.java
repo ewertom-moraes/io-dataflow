@@ -55,7 +55,7 @@ public class FixedFieldTest {
 		
 		expected.append(cnab.segmentosA.get(0).type);
 		expected.append(cnab.segmentosA.get(0).name+"       ");
-		expected.append("000"+cnab.segmentosA.get(0).sal.toString().replace(".", DecimalSeparator.COMMA.getValue()));
+		expected.append("00"+cnab.segmentosA.get(0).sal.toString().replace(".", DecimalSeparator.COMMA.getValue()) + "0");
 		expected.append(System.lineSeparator());
 		expected.append(cnab.segmentosA.get(0).segmentoB.type);
 		expected.append(cnab.segmentosA.get(0).segmentoB.email+"         ");

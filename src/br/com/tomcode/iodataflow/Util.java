@@ -5,14 +5,36 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import br.com.tomcode.iodataflow.strategy.fixedfield.DecimalField;
+import br.com.tomcode.iodataflow.strategy.fixedfield.FixedFieldAlign;
+
 public class Util {
 
 	public static String calendarToString(Calendar date, DateFormat dateFormat){
 		return new SimpleDateFormat(dateFormat.getPattern()).format(date.getTime());
 	}
 	
-	public static String bigDecimalToString(BigDecimal bigDecimal, DecimalSeparator decimalSeparator){
-		return bigDecimal.toString().replace(".", decimalSeparator.getValue());
+	private static String setDecimalDigits(String string, int decimalDigitis){
+		String[] split = string.split("\\.");
+		int decimaisAtuais = 0;
+		if(split.length > 1){
+			decimaisAtuais = split[1].length();
+		}
+		while(decimaisAtuais < decimalDigitis){
+			string = string + 0;
+			decimaisAtuais++;
+		}
+		return string;
+	}
+	
+	public static String bigDecimalToString(BigDecimal bigDecimal, DecimalSeparator decimalSeparator, int decimalDigitis){
+		String string = setDecimalDigits(bigDecimal.toString(), decimalDigitis);
+		return string.replace(".", decimalSeparator.getValue());
+	}
+	
+	public static String doubleToString(Double doubl, DecimalSeparator decimalSeparator, int decimalDigitis){
+		String string = setDecimalDigits( doubl.toString(), decimalDigitis);
+		return string.replace(".", decimalSeparator.getValue());
 	}
 	
 	public static String integerToString(Integer integer){
@@ -27,6 +49,12 @@ public class Util {
 		
 		String value = "";
 		Class<?> type = field.getType();
+		
+		int decimals = 2;
+		DecimalField decimalField = field.getAnnotation(DecimalField.class);
+		if(decimalField!= null){
+			decimals = decimalField.value();
+		}
 		
 		try {
 			if(field.get(instance)==null)
@@ -44,11 +72,11 @@ public class Util {
 			}
 			
 			if(type.isAssignableFrom(BigDecimal.class)){
-				value = bigDecimalToString((BigDecimal) field.get(instance), decimalSeparator);
+				value = bigDecimalToString((BigDecimal) field.get(instance), decimalSeparator, decimals);
 			}
 			
 			if(type.isAssignableFrom(Double.TYPE)|| type.isAssignableFrom(Double.class)){
-				value = "" +(BigDecimal) field.get(instance);
+				value = doubleToString((Double) field.get(instance), decimalSeparator, decimals);
 			}
 			
 			if(type.isAssignableFrom(Calendar.class)){

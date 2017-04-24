@@ -31,7 +31,7 @@ public class DlimitedLayoutTest {
 	public void testOneLine() {
 		
 		String[] linesProcessed = dataFlow.writeToStringBuilder().toString().split(System.lineSeparator());
-		String[] linesExpected = {"1|Joao da Silva|171235"}; 
+		String[] linesExpected = {"1|Joao da Silva|1712350"}; 
 		
 		
 		for(int i=0; i < linesProcessed.length ; i++){
