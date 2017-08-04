@@ -15,13 +15,34 @@ public class DataFlow {
 
 	private List<DataFlowRecord<?>> dataFlowRecords;
 	private GeneratorCore generator;
+	private ImportCore importCore;
+	private Object layoutConfig;
 
+	public DataFlow(Object layoutConfig, String fileImport) {
+		this.layoutConfig = layoutConfig;
+		
+		if (layoutConfig!=null){
+			if(layoutConfig.getClass().getAnnotation(IODataFlowFixedLayoutConfig.class)!=null){
+				importCore = new ImportCoreFixedLayout(fileImport);
+			}else if(layoutConfig.getClass().getAnnotation(IODataFlowDelimitedLayoutConfig.class)!=null){
+				throw new RuntimeException("Class of object argument layoutConfig IODataFlowDelimitedLayoutConfig not yet working :(");
+			}else if(layoutConfig.getClass().getAnnotation(IODataFlowNodeLayoutConfig.class)!=null){
+				//generator = new NodeFieldsGenerator(layoutConfig);
+				throw new RuntimeException("Class of object argument layoutConfig IODataFlowNodeLayoutConfig not yet working :(");
+			}else{
+				throw new RuntimeException("Class of object argument layoutConfig without Annotation Layout Config");
+			}
+		}
+		configDataFlows(layoutConfig);
+	}
+	
 	public DataFlow(Object layoutConfig) {
+		
+		this.layoutConfig = layoutConfig;
 		
 		if (layoutConfig!=null){
 			if(layoutConfig.getClass().getAnnotation(IODataFlowFixedLayoutConfig.class)!=null){
 				generator = new GeneratorCore(new FixedFieldsStrategy(layoutConfig.getClass()));
-				
 			}else if(layoutConfig.getClass().getAnnotation(IODataFlowDelimitedLayoutConfig.class)!=null){
 				generator = new GeneratorCore(new DelimitedFieldStrategy(layoutConfig.getClass()));
 				
@@ -33,6 +54,11 @@ public class DataFlow {
 			}
 		}
 			
+		configDataFlows(layoutConfig);
+		
+	}
+
+	private void configDataFlows(Object layoutConfig) {
 		this.dataFlowRecords = new ArrayList<>();
 		
 		for(Field field : layoutConfig.getClass().getFields()){
@@ -49,11 +75,14 @@ public class DataFlow {
 				}
 			}
 		}
-		
 	}
 
 	public StringBuilder writeToStringBuilder(){
 		return generator.writeToStringBuilder(dataFlowRecords);
+	}
+	
+	public Object importToLayout(){
+		return this.importCore.process(layoutConfig, dataFlowRecords);
 	}
 	
 //	public void writeToFile(java.io.File file){

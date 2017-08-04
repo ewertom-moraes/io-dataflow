@@ -3,7 +3,9 @@ package br.com.tomcode.iodataflow;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import br.com.tomcode.iodataflow.strategy.fixedfield.DecimalField;
 import br.com.tomcode.iodataflow.strategy.fixedfield.FixedFieldAlign;
@@ -88,6 +90,19 @@ public class Util {
 		}
 		
 		return new StringBuilder(value);
+	}
+	
+	public static List<Object> objToList(Object obj){
+		List<Object> list = new ArrayList<Object>();
+		if(obj instanceof List ){//.getClass().isArray()){ 
+			List<Object> subList = (List) obj;
+			for(Object o : subList){
+				list.add(o);
+			}
+		}else{
+			list.add(obj);
+		}
+		return list;
 	}
 	
 }

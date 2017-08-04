@@ -1,12 +1,10 @@
 package br.com.tomcode.iodataflow.api;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import br.com.tomcode.iodataflow.strategy.fixedfield.FixedField;
-import br.com.tomcode.iodataflow.strategy.fixedfield.IODataFlowFixedLayoutConfig;
+import br.com.tomcode.iodataflow.Util;
 
 public class GeneratorCore implements Generator{
 
@@ -23,7 +21,7 @@ public class GeneratorCore implements Generator{
 
 			for (Object obj : record.getObjects()) { // loop de registros a serem exportados
 				
-				for(Object subObject : objToList(obj)){ // loop de objetos no atributo (se for um list, senao é o proprio objeto)
+				for(Object subObject : Util.objToList(obj)){ // loop de objetos no atributo (se for um list, senao é o proprio objeto)
 					StringBuilder stringObj = new StringBuilder("");
 
 					if(subObject == null)
@@ -61,7 +59,7 @@ public class GeneratorCore implements Generator{
 							// format é apenas para campos que possuem valor proprio como string, int, etc...
 							continue; 
 						}else if(value instanceof List){
-							 List<Object> list = objToList(value);
+							 List<Object> list = Util.objToList(value);
 							 for(Object sub : list){
 								for(Field subfield : sub.getClass().getFields()){
 									stringObj.append(dataFlowStrategy.format(subfield, sub));
@@ -79,17 +77,6 @@ public class GeneratorCore implements Generator{
 		return file;
 	}
 	
-	private List<Object> objToList(Object obj){
-		List<Object> list = new ArrayList<Object>();
-		if(obj instanceof List ){//.getClass().isArray()){ 
-			List<Object> subList = (List) obj;
-			for(Object o : subList){
-				list.add(o);
-			}
-		}else{
-			list.add(obj);
-		}
-		return list;
-	}
+	
 	
 }
