@@ -18,4 +18,7 @@ public interface DataFlowStrategy {
 	 * */
 	public String appendLineSeparator(StringBuilder str);
 	
+	
+	public StringBuilder finalize(StringBuilder file);
+	
 }

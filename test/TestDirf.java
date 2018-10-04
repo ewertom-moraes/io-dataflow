@@ -106,7 +106,7 @@ public class TestDirf {
 		
 		DataFlow dt = new DataFlow(layout);
 		
-		assertEquals("DIRF|2016|2017|N||P49VS72|", dt.writeToStringBuilder().toString().split(System.lineSeparator())[0]);
+		assertEquals("DIRF|2016|2017|N||P49VS72|", dt.writeToStringBuilder().toString().split(System.lineSeparator())[1]);
 		
 	}
 	

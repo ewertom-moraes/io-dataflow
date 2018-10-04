@@ -5,7 +5,7 @@ import java.util.List;
 import br.com.tomcode.iodataflow.DataFlowRecord;
 import br.com.tomcode.iodataflow.strategy.delimited.IODataFlowDelimitedLayoutConfig;
 
-@IODataFlowDelimitedLayoutConfig( lineEnd="|", delimiter="|")
+@IODataFlowDelimitedLayoutConfig( lineEnd="|", delimiter="|" , withHeadersOf=RESPO.class)
 public class LayoutDIRF {
 
 	@DataFlowRecord

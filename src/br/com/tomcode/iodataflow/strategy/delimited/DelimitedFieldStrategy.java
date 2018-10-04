@@ -1,7 +1,10 @@
 package br.com.tomcode.iodataflow.strategy.delimited;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
+import br.com.tomcode.iodataflow.DataFlowRecord;
 import br.com.tomcode.iodataflow.DateFormat;
 import br.com.tomcode.iodataflow.DecimalSeparator;
 import br.com.tomcode.iodataflow.Util;
@@ -43,6 +46,26 @@ public class DelimitedFieldStrategy implements DataFlowStrategy {
 			return System.lineSeparator();
 		}
 		return "";
+	}
+
+	@Override
+	public StringBuilder finalize(StringBuilder file) {
+		IODataFlowDelimitedLayoutConfig layoutConfigAnnotation = this.layoutConfig.getAnnotation(IODataFlowDelimitedLayoutConfig.class);
+		String delimiter = layoutConfigAnnotation.delimiter();
+		Class<?> withHeadersOf = layoutConfigAnnotation.withHeadersOf();
+		String hearders = "";
+		String withHeaders = layoutConfigAnnotation.withHeaders();
+		if(!withHeaders.isEmpty()){
+			hearders = withHeaders;
+		}else if (!withHeadersOf.equals(IODataFlowDelimitedLayoutConfig.class)){
+			hearders = Arrays.asList(withHeadersOf.getFields()).stream()
+				.map(f -> f.getName())
+				.collect(Collectors.joining(delimiter));
+		}
+		if(!hearders.trim().isEmpty()){
+			file = new StringBuilder(hearders + System.lineSeparator() + file);
+		}
+		return file;
 	}
 	
 }

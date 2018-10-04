@@ -102,4 +102,9 @@ public class FixedFieldsStrategy implements DataFlowStrategy{
 		return sb;
 		
 	}
+
+	@Override
+	public StringBuilder finalize(StringBuilder file) {
+		return file;
+	}
 }

@@ -15,6 +15,8 @@ public @interface IODataFlowDelimitedLayoutConfig {
 	DateFormat defaultDateFormat() default DateFormat.AAAAMMDD;
 	DecimalSeparator defaultDecimalSeparator() default DecimalSeparator.NONE;
 	String lineEnd() default "";
+	Class<?> withHeadersOf() default IODataFlowDelimitedLayoutConfig.class;
+	String withHeaders() default "";
 	
 	String delimiter();
 }

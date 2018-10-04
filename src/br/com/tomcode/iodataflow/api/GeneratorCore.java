@@ -17,6 +17,12 @@ public class GeneratorCore implements Generator{
 	}
 	
 	public StringBuilder writeToStringBuilder(List<DataFlowRecord<?>> dataFlowRecords) {
+		StringBuilder strBuilder = writeToStringBuilderExecute(dataFlowRecords);
+		strBuilder = dataFlowStrategy.finalize(strBuilder);
+		return strBuilder;
+	}
+	
+	private StringBuilder writeToStringBuilderExecute(List<DataFlowRecord<?>> dataFlowRecords) {
 		StringBuilder file = new StringBuilder();
 
 		for (DataFlowRecord<?> record : dataFlowRecords) { // loop de objetos dataFlow que contem os registros a serem exportados
